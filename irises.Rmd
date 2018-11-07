@@ -11,7 +11,32 @@ knitr::opts_chunk$set(echo = TRUE)
 #### 0. Load in relevant packages
 ```{r set up code, message = FALSE}
 library(tidyverse)
+library(kableExtra)
+```
 
+#### 1. Data wrangling with the iris package.
+```{r make a summary table}
+# create a new table using iris data
+iris_simpl <- iris %>%
+  # group data by species
+  group_by(Species) %>% 
+  # some summary statistics of interest
+  summarize(
+    mean_sepal_l = mean(Sepal.Length),
+    mean_sepal_w = mean(Sepal.Width),
+    mean_petal_l = mean(Petal.Length),
+    mean_petal_w = mean(Petal.Width),
+    sample_size = length(Species)
+  )
 
+# set a vector with table column names
+table_columns = c("Species", "Mean sepal length", "Mean sepal width", "Mean petal length", "Mean petal width", "Sample size")
+
+# set a vector for table caption
+table_caption = c("**Table 1. Summary of iris species measurements.** All measurements are in centimeters and come from the famous (Fisher's or Anderson's) iris dataset.")
+
+kable(iris_simpl,
+      col.names = table_columns,
+      caption = table_caption)
 ```
 
