@@ -2,7 +2,8 @@
 title: "iris tests"
 author: "An Bui"
 date: "11/7/2018"
-output: html_document
+output:
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,31 +13,78 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r set up code, message = FALSE}
 library(tidyverse)
 library(kableExtra)
+library(dplyr)
 ```
 
 #### 1. Data wrangling with the iris package.
+```{r create a data frame to use}
+# create a new data frame from iris, group by species
+iris_new <- iris %>% 
+  group_by(Species)
+```
+
 ```{r make a summary table}
 # create a new table using iris data
-iris_simpl <- iris %>%
-  # group data by species
-  group_by(Species) %>% 
+iris_simpl <- iris_new %>%
   # some summary statistics of interest
   summarize(
-    mean_sepal_l = mean(Sepal.Length),
-    mean_sepal_w = mean(Sepal.Width),
-    mean_petal_l = mean(Petal.Length),
-    mean_petal_w = mean(Petal.Width),
+    mean_petal_l = round(mean(Petal.Length),2),
+    mean_petal_w = round(mean(Petal.Width),2),
     sample_size = length(Species)
   )
 
 # set a vector with table column names
-table_columns = c("Species", "Mean sepal length", "Mean sepal width", "Mean petal length", "Mean petal width", "Sample size")
+table_columns = c("Species", "Mean petal length", "Mean petal width", "Sample size")
 
 # set a vector for table caption
-table_caption = c("**Table 1. Summary of iris species measurements.** All measurements are in centimeters and come from the famous (Fisher's or Anderson's) iris dataset.")
+table_caption = c("**Table 1. Summary of iris petal measurements.** All measurements are in centimeters and come from the famous (Fisher's or Anderson's) iris dataset.")
 
 kable(iris_simpl,
       col.names = table_columns,
-      caption = table_caption)
+      caption = table_caption) %>% 
+  kable_styling(
+      position = "center")
+```
+#### 2. Ask a question of the data.
+Do iris species have different petal lengths?  
+H~0~: There is no difference in petal lengths.  
+H~A~: There is a difference in petal lengths.  
+
+First, make a histogram.
+```{r make a histogram of petal length}
+# write your labels
+iris_hist_x = c("Petal length (cm)")
+iris_hist_y = c("Frequency (n = 50)")
+iris_hist_caption = expression(paste(bold("Figure 1. Histogram of iris petal lengths. "), "Data are normally distributed."))
+
+# make a histogram of sepal length
+iris_hist <- ggplot(iris_new, aes(x = Petal.Length)) +
+  geom_histogram(bins = 10,
+                 aes(fill = Species)) +
+  facet_wrap(~ Species) +
+  labs(x = iris_hist_x, y = iris_hist_y, caption = iris_hist_caption) +
+  theme_bw() +
+  theme(plot.caption = element_text(hjust = 0))
+
+iris_hist
+
+```
+Then, make a qqplot.
+```{r make a qqplot of petal length}
+# write your labels
+iris_qq_caption = expression(paste(bold("Figure 2. QQPlot of iris petal lengths. "), "There is a linear relationship between values drawn from a theoretically normally distributed population (x-axis) and sample values (y-axis), therefore data are normally distributed."))
+### how do you make captions wrap????
+
+# create your qqplot
+iris_qq <- ggplot(iris, aes(sample = Petal.Length)) +
+  geom_qq() +
+  facet_wrap(~ Species) +
+  labs(caption = iris_qq_caption) +
+  theme_bw() +
+  theme(plot.caption = element_text(hjust = 0))
+  
+
+iris_qq
 ```
 
+In the end, you know that petal length is normally distributed from the histogram and the qqplot. Additionally, you know that your sample size is greater than 30, therefore the means of samples drawn from the population will be normally distributed following the CLT.
