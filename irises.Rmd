@@ -49,14 +49,16 @@ kable(iris_simpl,
 Do iris species have different petal lengths?  
 H~0~: There is no difference in mean petal lengths between the three iris species.  
 H~A~: There is a difference in mean petal lengths between at least two iris species.  
-You know that you're comparing three groups, so you can't use a t-test; rather, you'll use an ANOVA. However, you have some conditions to meet:  
+You know that you're comparing three groups, so you can't use a t-test; rather, you'll use an ANOVA. There is **one factor** (species), with **three levels** (setosa, versicolor, virginica), and a **continuous random variable** (petal length).  
+
+However, you have some conditions to meet:  
 - normal data  
 - equal variances  
 - continuous data  
 - independence  
-Independence and continuous data are already established, so now you have to figure out of the data are normally distributed and if they have equal variances.
+Independence and continuous data are already established, so now you have to figure out of the data are normally distributed and if they have equal variances.  
 
-First, make a histogram.
+First, determine normality. Start by make a histogram.
 ```{r make a histogram of petal length}
 # write your labels
 iris_hist_x = c("Petal length (cm)")
@@ -93,4 +95,49 @@ iris_qq <- ggplot(iris, aes(sample = Petal.Length)) +
 iris_qq
 ```
 
-In the end, you know that petal length is normally distributed from the histogram and the qqplot. Additionally, you know that your sample size is greater than 30, so the means of samples drawn from the population will be normally distributed following the CLT. Therefore, you can use a 
+Now, test for equal variances?? Ask about this.
+```{r test for equal variance}
+# first you have to make vectors of values that you're trying to compare
+setosa_length <- iris %>% 
+  filter(Species == "setosa") %>% 
+  pull(Petal.Length)
+
+versicolor_length <- iris %>% 
+  filter(Species == "versicolor") %>% 
+  pull(Petal.Length)
+
+virginica_length <- iris %>% 
+  filter(Species == "Versicolor") %>% 
+  pull(Petal.Length)
+```
+
+Now, you're ready to do your ANOVA!
+```{r ANOVA}
+iris_aov <- aov(Petal.Length ~ Species, data = iris)
+
+summary(iris_aov)
+```
+Yes, there are significant differences in means (one-way ANOVA, F(2) = statistic, p < 0.001, $\alpha$ = 0.05). But which ones are actually different?
+
+```{r post-hoc Tukey}
+iris_ph <- TukeyHSD(iris_aov)
+
+iris_ph
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
