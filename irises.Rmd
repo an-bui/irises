@@ -47,8 +47,14 @@ kable(iris_simpl,
 ```
 #### 2. Ask a question of the data.
 Do iris species have different petal lengths?  
-H~0~: There is no difference in petal lengths.  
-H~A~: There is a difference in petal lengths.  
+H~0~: There is no difference in mean petal lengths between the three iris species.  
+H~A~: There is a difference in mean petal lengths between at least two iris species.  
+You know that you're comparing three groups, so you can't use a t-test; rather, you'll use an ANOVA. However, you have some conditions to meet:  
+- normal data  
+- equal variances  
+- continuous data  
+- independence  
+Independence and continuous data are already established, so now you have to figure out of the data are normally distributed and if they have equal variances.
 
 First, make a histogram.
 ```{r make a histogram of petal length}
@@ -87,4 +93,4 @@ iris_qq <- ggplot(iris, aes(sample = Petal.Length)) +
 iris_qq
 ```
 
-In the end, you know that petal length is normally distributed from the histogram and the qqplot. Additionally, you know that your sample size is greater than 30, therefore the means of samples drawn from the population will be normally distributed following the CLT.
+In the end, you know that petal length is normally distributed from the histogram and the qqplot. Additionally, you know that your sample size is greater than 30, so the means of samples drawn from the population will be normally distributed following the CLT. Therefore, you can use a 
