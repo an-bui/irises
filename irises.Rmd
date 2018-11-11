@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(kableExtra)
 library(dplyr)
+library(ggThemeAssist)
 ```
 
 #### 1. Data wrangling with the iris package.
@@ -91,7 +92,6 @@ iris_qq <- ggplot(iris, aes(sample = Petal.Length)) +
   theme_bw() +
   theme(plot.caption = element_text(hjust = 0))
   
-
 iris_qq
 ```
 
@@ -125,7 +125,7 @@ iris_ph <- TukeyHSD(iris_aov)
 iris_ph
 ```
 
-
+just testing stuff out.
 
 
 
